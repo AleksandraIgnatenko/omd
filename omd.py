@@ -1,5 +1,26 @@
 from collections import Counter
 from collections import defaultdict
+from typing import TypedDict
+
+
+class Order(TypedDict):
+    id: int
+    buyer: str
+    status: str
+    amount: int
+
+
+class Day(TypedDict):
+    day: str
+    orders: int
+    revenue: int
+    returns: int
+
+
+class Review(TypedDict):
+    id: int
+    product: str
+    stars: int
 
 
 def task1() -> None:
@@ -27,19 +48,19 @@ def task2() -> None:
 
     count_values = Counter(queries)
     dict_count_values = dict(count_values)
-    most_common = max(count_values, key=count_values.get)
+    most_common = max(count_values, key=lambda q: count_values[q])
 
     print(f'Всего запросов в ленте: {len(queries)}')
     print(f'Сколько раз ввели каждый запрос: {dict_count_values}')
     print(f'Самый частый запрос: {most_common}')
-    print(f'Доля: {dict_count_values[most_common] / len(queries)}')
+    print(f'Доля: {dict_count_values[most_common] / len(queries):.2f}')
 
     count_values_one = {k: v for k, v in dict_count_values.items() if v == 1}
     print(f'Встретились один раз: {count_values_one}')
 
 
 def task3() -> None:
-    orders = [
+    orders: list[Order] = [
         {"id": 1, "buyer": "anya", "status": "delivered", "amount": 900},
         {"id": 2, "buyer": "boris", "status": "returned", "amount": 4_500},
         {"id": 3, "buyer": "anya", "status": "delivered", "amount": 1_500},
@@ -61,7 +82,7 @@ def task3() -> None:
 
 
 def task4() -> None:
-    days = [
+    days: list[Day] = [
         {"day": "пн", "orders": 20, "revenue": 40_000, "returns": 2},
         {"day": "вт", "orders": 16, "revenue": 19_200, "returns": 4},
         {"day": "ср", "orders": 25, "revenue": 55_000, "returns": 1},
@@ -81,7 +102,7 @@ def task4() -> None:
 
 
 def task5() -> None:
-    reviews = [
+    reviews: list[Review] = [
         {"id": 1, "product": "Чехол", "stars": 5},
         {"id": 1, "product": "Чехол", "stars": 3},
         {"id": 1, "product": "Чехол", "stars": 4},
@@ -107,7 +128,7 @@ def task5() -> None:
 
     avg_more_two = {pid: sum(s) / len(s) for pid, s in ratings.items()
                     if len(s) >= 2}
-    worst_id = min(avg_more_two, key=avg_more_two.get)
+    worst_id = min(avg_more_two, key=lambda pid: avg_more_two[pid])
     print(f"Худший товар: {names[worst_id]} — {avg_more_two[worst_id]}")
 
     count_less = len([x for x in reviews if x["stars"] <= 2])
