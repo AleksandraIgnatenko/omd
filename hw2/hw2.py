@@ -121,52 +121,43 @@ def save_report_to_csv(
     print(f"Отчет успешно сохранен в файл: {filename}")
 
 
-def main() -> None:
-    """Запускает меню для работы с данными из файла CSV
+def main(report_number: int) -> None:
+    """Готовит и выводит отчёт по выбранному варианту.
 
-    Позволяет выводить иерархию, отчет и сохранять его в файл.
+    Args:
+        report_number (int): Номер отчёта (1 — иерархия,
+            2 — сводка по департаментам, 3 — сохранение сводки в CSV).
+
+    Returns:
+        None
     """
     try:
         data = read_file("Corp_Summary.csv")
     except FileNotFoundError:
         print("Ошибка: файл Corp_Summary.csv не найден.")
         return
-    while True:
-        print("\nМеню")
-        print("1. Вывести иерархию команд (департамент и команды).\n")
-        print("2. Вывести сводный отчёт по департаментам.\n")
-        print("3. Сохранить сводный отчёт в CSV-файл.\n")
-        print("4. Завершить работу.\n")
 
-        try:
-            choice = int(input("Выберите пункт меню (1-4): "))
-        except ValueError:
-            print("Введите число от 1 до 4.")
-            continue
-        match choice:
-            case 1:
-                res = hierarchy_dept(data)
-                if res:
-                    for dept, teams in res.items():
-                        print(f"{dept}: {', '.join(teams)}")
-            case 2:
-                report = report_dept(data)
-                for dept, info in report.items():
-                    print(f"Департамент: {dept}")
-                    print(f"    Численность: {info['Численность']}")
-                    print(
-                        f"    Вилка: {info['Минимальная зарплата']} - "
-                        f"    {info['Максимальная зарплата']}"
-                    )
-                    print(f"    Средняя зарплата: {info['Средняя зарплата']}")
-            case 3:
-                save_report_to_csv(data, "report.csv")
-            case 4:
-                print("Выход из программы.")
-                break
-            case _:
-                print("Неверный пункт меню. Попробуйте снова.")
+    match report_number:
+        case 1:
+            res = hierarchy_dept(data)
+            if res:
+                for dept, teams in res.items():
+                    print(f"{dept}: {', '.join(teams)}")
+        case 2:
+            report = report_dept(data)
+            for dept, info in report.items():
+                print(f"Департамент: {dept}")
+                print(f"    Численность: {info['Численность']}")
+                print(
+                    f"    Вилка: {info['Минимальная зарплата']} - "
+                    f"{info['Максимальная зарплата']}"
+                )
+                print(f"    Средняя зарплата: {info['Средняя зарплата']}")
+        case 3:
+            save_report_to_csv(data, "report.csv")
+        case _:
+            print("Неверный номер отчёта. Введите число от 1 до 3.")
 
 
 if __name__ == "__main__":
-    main()
+    main(int(input("Укажите номер отчёта от 1 до 3: ")))
